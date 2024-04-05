@@ -12,7 +12,7 @@ The topology consists of one switch and four hosts connected as follows:
 --- = link between node and switch
 
 Usage:
-To use this script, simply run it using Python.
+To use this script, simply run it using sudo python3 part1.py.
 This will create the defined network topology and start the Mininet CLI for interaction.
 """
 
