@@ -38,7 +38,6 @@ class Firewall (object):
     self._install_icmp_rule()
     self._install_arp_rule()
     self._install_drop_rule()
-    # TODO: Ask about this flooding stuff...
 
   def _install_icmp_rule(self):
     """
@@ -50,7 +49,7 @@ class Firewall (object):
     icmp_match.dl_type = IPV4  # Setting Ether type / length
     icmp_match.nw_proto = ICMP_PROTO  # Setting IP protocol
     # Create an OpenFlow action to accept the icmp traffic
-    icmp_accept_action = of.ofp_action_output(port=of.OFPP_NORMAL)
+    icmp_accept_action = of.ofp_action_output(port=of.OFPP_FLOOD)
     # Create an OpenFlow flow_mod message to install the rule
     icmp_flow_mod = of.ofp_flow_mod()
     icmp_flow_mod.match = icmp_match
@@ -65,7 +64,7 @@ class Firewall (object):
     """
     arp_match = of.ofp_match()
     arp_match.dl_type = ARP_ETHERTYPE
-    arp_accept_action = of.ofp_action_output(port=of.OFPP_NORMAL)
+    arp_accept_action = of.ofp_action_output(port=of.OFPP_FLOOD) 
     arp_flow_mod = of.ofp_flow_mod()
     arp_flow_mod.match = arp_match
     arp_flow_mod.actions.append(arp_accept_action)
@@ -77,8 +76,14 @@ class Firewall (object):
      Installs a default rule to drop all other IPv4 traffic.
      | any ipv4 | any ipv4 | --- | drop |
     """
-    # To drop every other traffic, simply do nothing
-    pass
+    drop_match = of.ofp_match()
+    drop_match.dl_type = IPV4
+    drop_accept_action = of.ofp_action_output(port=of.OFPP_NONE) 
+    drop_flow_mod = of.ofp_flow_mod()
+    drop_flow_mod.match = drop_match
+    drop_flow_mod.actions.append(drop_accept_action)
+    # Install the drop_flow_mod message to the switch
+    self.connection.send(drop_flow_mod)
 
   def _handle_PacketIn(self, event):
     """
