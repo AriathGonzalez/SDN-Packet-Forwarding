@@ -78,10 +78,8 @@ class Firewall (object):
     """
     drop_match = of.ofp_match()
     drop_match.dl_type = IPV4
-    drop_accept_action = of.ofp_action_output(port=of.OFPP_NONE) 
     drop_flow_mod = of.ofp_flow_mod()
     drop_flow_mod.match = drop_match
-    drop_flow_mod.actions.append(drop_accept_action)
     # Install the drop_flow_mod message to the switch
     self.connection.send(drop_flow_mod)
 
