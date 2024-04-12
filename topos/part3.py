@@ -36,7 +36,7 @@ topos = {'part3' : part3_topo}
 
 def configure():
   topo = part3_topo()
-  net = Mininet(topo=topo, controller=RemoteController)
+  net = Mininet(topo=topo, controller=RemoteController(name="part3controller",port=6633))
   net.start()
   
   CLI(net)
